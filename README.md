@@ -19,4 +19,4 @@ This repository is licensed under the MIT License. Feel free to explore, fork, o
 
 ## Contact
 
-Feel free to reach out if you have any questions or feedback! You can find me on [GitHub](https://github.com/yourusername) or reach me at myemail@example.com.
+Feel free to reach out if you have any questions or feedback! You can find me on [GitHub](https://github.com/edjun9) or reach me at edjun9@gmail.com.
