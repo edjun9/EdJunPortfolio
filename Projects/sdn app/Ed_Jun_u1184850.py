@@ -9,8 +9,8 @@ import pox.lib.packet as pkt
 log = core.getLogger()
 
 # Configuration: Virtual IP and real server details
-VIRTUAL_IP = IPAddr("10.0.0.10")  # Virtual IP that clients will ping
-SERVER_IPS = [IPAddr("10.0.0.5"), IPAddr("10.0.0.6")]  # Real server IPs
+VIRTUAL_IP = IPAddr("10.0.0.10")
+SERVER_IPS = [IPAddr("10.0.0.5"), IPAddr("10.0.0.6")]
 SERVER_MACS = {
     IPAddr("10.0.0.5"): EthAddr("00:00:00:00:00:05"),
     IPAddr("10.0.0.6"): EthAddr("00:00:00:00:00:06")
@@ -19,7 +19,7 @@ SERVER_MACS = {
 class LoadBalancer(object):
     def __init__(self, connection):
         self.connection = connection
-        self.next_server = 0  # For round-robin selection
+        self.next_server = 0
         log.info("Switch connected: %s", connection)
         connection.addListeners(self)
 
@@ -36,7 +36,6 @@ class LoadBalancer(object):
             self.handle_arp(packet, inport, event.ofp)
             return
 
-        # Handle ICMP packets (optional logging)
         if packet.type == pkt.ethernet.IP_TYPE:
             ip_packet = packet.payload
             if ip_packet.protocol == pkt.ipv4.ICMP_PROTOCOL:
@@ -46,7 +45,6 @@ class LoadBalancer(object):
     def handle_arp(self, packet, inport, ofp):
         arp_packet = packet.payload
         if arp_packet.opcode == pkt.arp.REQUEST and arp_packet.protodst == VIRTUAL_IP:
-            # Round-robin selection of a real server
             chosen_ip = SERVER_IPS[self.next_server]
             self.next_server = (self.next_server + 1) % len(SERVER_IPS)
             chosen_mac = SERVER_MACS[chosen_ip]
@@ -80,7 +78,6 @@ class LoadBalancer(object):
         log.info("ICMP packet received. It should be handled by installed flow rules.")
 
     def install_flow_rules(self, client_port, server_ip, server_mac):
-        # For simplicity, assume server is connected to a specific port (e.g., port 5)
         s_port = 5
 
         msg = of.ofp_flow_mod()
@@ -101,6 +98,15 @@ class LoadBalancer(object):
         self.connection.send(msg)
 
         log.info("Installed flow rules for client port %s to server %s", client_port, server_ip)
+    
+    def install_arp_flow(self, client_port):
+        msg = of.ofp_flow_mod()
+        msg.match.dl_type = 0x0806  # ARP
+        msg.match.nw_dst = VIRTUAL_IP
+    
+        msg.actions.append(of.ofp_action_output(port=client_port))
+        self.connection.send(msg)
+        log.info("Installed ARP flow rule for port %s", client_port)
 
 def launch():
     def start_switch(event):
