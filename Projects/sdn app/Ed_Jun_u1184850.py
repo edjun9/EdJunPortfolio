@@ -136,7 +136,12 @@ class LoadBalancer(object):
             server_ip: The IP address of the chosen server.
             server_mac: The MAC address of the chosen server.
         """
-        s_port = 5
+        if server_ip == IPAddr("10.0.0.5"):
+            s_port = 5
+        elif server_ip == IPAddr("10.0.0.6"):
+            s_port = 6
+        else:
+            s_port = 5
 
         msg = of.ofp_flow_mod()
         msg.match.in_port = client_port
