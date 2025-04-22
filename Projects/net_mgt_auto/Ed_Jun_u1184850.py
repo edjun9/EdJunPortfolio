@@ -51,19 +51,24 @@ def cmd_init(args):
     """Create Docker networks and launch containers with assigned IPs."""
     # Create networks
     for net, subnet in NETWORKS.items():
-        run(f"docker network create --driver bridge --subnet {subnet} {net}")
+        run(f"docker network create --driver bridge --subnet {subnet} {net} || true")
     # Launch containers
     # Use ubuntu:20.04 base image for all
-    for name, networks in IP_ASSIGNMENTS.items():
+    for name, assignemnts in IP_ASSIGNMENTS.items():
         cname = CONTAINERS[name]
-        nets = []
-        for net, ip in networks:
-            nets.append(f"--network {net} --ip {ip}")
-        nets_str = ' '.join(nets)
+        
+        run(f"docker rm -f {cname} || true", check=False)
+
+        first_net, first_ip = assignments[0]
+
         run(
             f"docker run -d --name {cname} --privileged --cap-add=NET_ADMIN "
-            f"{nets_str} ubuntu:20.04 bash"
+            f"--network {first_net} --ip {first_ip} ubuntu:20.04 bash"
         )
+
+        for net, ip in assignemnts[1:]:
+             run(f"docker network connect --ip {ip} {net} {cname}")
+    
     print("[init] Topology constructed.")
 
 
@@ -78,36 +83,27 @@ def cmd_start_ospf(args):
         run(f"docker exec {c} sed -i 's/^ospfd=no/ospfd=yes/' /etc/frr/daemons")
         # Restart FRR services
         run(f"docker exec {c} service frr restart")
-        # Build vtysh configure commands
-        vcmds = ["configure terminal", 'router ospf']
-        # assign router-id based on container
-        rid = {'r1': '1.1.1.1','r2':'2.2.2.2','r3':'3.3.3.3','r4':'4.4.4.4'}[r]
-        vcmds.append(f"ospf router-id {rid}")
-        # advertise each attached subnet
-        for net, ip in IP_ASSIGNMENTS[r]:
-            subnet = NETWORKS[net]
-            vcmds.append(f"network {subnet} area 0.0.0.0")
-        vcmds.append('end')
-        vcmds.append('write memory')
-        # chain into vtysh -c flags
-        cmd = f"docker exec {c} vtysh"
-        for vc in vcmds:
-            cmd += f" -c '{vc}'"
-        run(cmd)
-    print("[start-ospf] OSPF started on all routers.")
+        # Build OSPF config commands
+        rid_map = {'r1':'1.1.1.1','r2':'2.2.2.2','r3':'3.3.3.3','r4':'4.4.4.4'}
+        commands = ["configure terminal", "router ospf", f"ospf router-id {rid_map[r]}"]
+        for net, _ in IP_ASSIGNMENTS[r]:
+            commands.append(f"network {NETWORKS[net]} area 0.0.0.0")
+        commands += ['end','write memory']
+        # Execute via vtysh
+        vty_cmd = f"docker exec {c} vtysh"
+        for cmd in commands:
+            vty_cmd += f" -c '{cmd}'"
+        run(vty_cmd)
+    print("[start-ospf] OSPF configured on all routers.")
 
 
 def cmd_add_hosts(args):
-    """Install routes on HostA and HostB to reach each others' subnets via the routers."""
-    # HostA route to HostB subnet via R1
-    run(
-        f"docker exec {CONTAINERS['hosta']} route add -net {NETWORKS['part1_net15']} gw 10.0.14.4"
-    )
-    # HostB route to HostA subnet via R3
-    run(
-        f"docker exec {CONTAINERS['hostb']} route add -net {NETWORKS['part1_net14']} gw 10.0.15.4"
-    )
-    print("[add-hosts] Host routes configured.")
+    # HostA route to HostB via R1
+    run(f"docker exec {CONTAINERS['hosta']} route add -net {NETWORKS['part1_net15']} gw {IP_ASSIGNMENTS['r1'][0][1]}")
+    # HostB route to HostA via R3
+    run(f"docker exec {CONTAINERS['hostb']} route add -net {NETWORKS['part1_net14']} gw {IP_ASSIGNMENTS['r3'][-1][1]}")
+    print("[add-hosts] Static host routes installed.")
+
 
 
 def cmd_move(args):
