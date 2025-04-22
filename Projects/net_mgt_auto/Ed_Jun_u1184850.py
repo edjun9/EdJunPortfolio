@@ -63,7 +63,8 @@ def cmd_init(args):
 
         run(
             f"docker run -d --name {cname} --privileged --cap-add=NET_ADMIN "
-            f"--network {first_net} --ip {first_ip} ubuntu:20.04 bash"
+            f"--network {first_net} --ip {first_ip} ubuntu:20.04 "
+            f"bash -c 'tail -f /dev/null'"
         )
 
         for net, ip in assignments[1:]:
