@@ -54,7 +54,7 @@ def cmd_init(args):
         run(f"docker network create --driver bridge --subnet {subnet} {net} || true")
     # Launch containers
     # Use ubuntu:20.04 base image for all
-    for name, assignemnts in IP_ASSIGNMENTS.items():
+    for name, assignments in IP_ASSIGNMENTS.items():
         cname = CONTAINERS[name]
         
         run(f"docker rm -f {cname} || true", check=False)
@@ -66,7 +66,7 @@ def cmd_init(args):
             f"--network {first_net} --ip {first_ip} ubuntu:20.04 bash"
         )
 
-        for net, ip in assignemnts[1:]:
+        for net, ip in assignments[1:]:
              run(f"docker network connect --ip {ip} {net} {cname}")
     
     print("[init] Topology constructed.")
