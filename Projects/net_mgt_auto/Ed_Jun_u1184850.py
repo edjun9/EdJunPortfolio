@@ -2,6 +2,11 @@
 """
 Orchestrator for CS4480 PA3: Network Management Automation
 Implements topology creation, OSPF startup, host route installation, and traffic path movement.
+Usage:
+    init         Construct Docker topology
+    start-ospf   Install & configure OSPF on routers
+    add-hosts    Install static routes on HostA/HostB
+    move --path {north,south}
 """
 import argparse
 import subprocess
@@ -141,13 +146,16 @@ def cmd_move(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Network orchestrator: init, start-ospf, add-hosts, move')
-    sub = parser.add_subparsers(dest='command', required=True)
-    sub.add_parser('init')
-    sub.add_parser('start-ospf')
-    sub.add_parser('add-hosts')
-    p = sub.add_parser('move')
-    p.add_argument('--path', choices=['north','south'], required=True)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    sub = parser.add_subparsers(dest='command', required=True, metavar='COMMAND')
+    sub.add_parser('init', help='Construct Docker topology')
+    sub.add_parser('start-ospf', help='Install & configure OSPF on routers')
+    sub.add_parser('add-hosts', help='Install static routes on HostA/HostB')
+    p = sub.add_parser('move', help='Switch traffic path: north or south')
+    p.add_argument('--path', choices=['north','south'], required=True, help='Traffic path to select')
     args = parser.parse_args()
     if args.command == 'init':
         cmd_init(args)
