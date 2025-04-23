@@ -93,12 +93,27 @@ def cmd_start_ospf(args):
 
 
 def cmd_add_hosts(args):
-    """Install iproute2 and ping, then add static routes on HostA and HostB."""
-    # Install tools, add routes
-    run(f"docker exec {CONTAINERS['hosta']} bash -c 'apt update && apt install -y iproute2 iputils-ping'")
-    run(f"docker exec {CONTAINERS['hosta']} ip route add {NETWORKS['part1_net15']} via {IP_ASSIGNMENTS['r1'][0][1]}")
-    run(f"docker exec {CONTAINERS['hostb']} bash -c 'apt update && apt install -y iproute2 iputils-ping'")
-    run(f"docker exec {CONTAINERS['hostb']} ip route add {NETWORKS['part1_net14']} via {IP_ASSIGNMENTS['r3'][-1][1]}")
+    """Install iproute2 and ping in hosts, then add static routes."""
+    # HostA: install tools, then add route to HostB via R1
+    run(
+        f"docker exec {CONTAINERS['hosta']} bash -c "
+        f"'apt update && apt install -y iproute2 iputils-ping'"
+    )
+    run(
+        f"docker exec {CONTAINERS['hosta']} "
+        f"ip route add {NETWORKS['part1_net15']} via {IP_ASSIGNMENTS['r1'][0][1]}"
+    )
+
+    # HostB: install tools, then add route to HostA via R3
+    run(
+        f"docker exec {CONTAINERS['hostb']} bash -c "
+        f"'apt update && apt install -y iproute2 iputils-ping'"
+    )
+    run(
+        f"docker exec {CONTAINERS['hostb']} "
+        f"ip route add {NETWORKS['part1_net14']} via {IP_ASSIGNMENTS['r3'][-1][1]}"
+    )
+
     print("[add-hosts] Static host routes installed.")
 
 
