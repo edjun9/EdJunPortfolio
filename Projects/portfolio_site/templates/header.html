@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <div id="nav-bar" class="class-nav-bar">
+            <div id="nav-logo" class="class-nav-logp">
+                <h1>Ed's Portfolio</h1>
+            </div>
+            <nav id="nav-links" class="class-nav-bar">
+                <a href="{% url 'home' %}" title="Go back to the Homepage">
+                    Home
+                </a>
+                <a href="{% url 'work' %}" title="Go to Work Experience">
+                    Work Experience
+                </a>
+                <a href="{% url 'projects' %}" title="Go to Projects">
+                    Projects
+                </a>
+                <a href="{% url 'me' %}" title="Go to About Me">
+                    About Me
+                </a>
+            </nav>
+        </div>
+    </body>
+</html>
