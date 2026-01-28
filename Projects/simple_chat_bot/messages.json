@@ -1,0 +1,48 @@
+[
+  {
+    "role": "user",
+    "content": "Hello",
+    "timestamp": "2026-01-26T16:15:20.034057",
+    "harmony_format": "<|start|><|channel|>final user<|message|>Hello<|end|>"
+  },
+  {
+    "role": "assistant",
+    "content": "Hi there!",
+    "channel": "final",
+    "timestamp": "2026-01-26T16:15:20.034328",
+    "harmony_format": "<|start|><|channel|>final assistant<|message|>Hi there!<|end|>"
+  },
+  {
+    "role": "user",
+    "content": "Test",
+    "timestamp": "2026-01-26T16:15:20.034452",
+    "harmony_format": "<|start|><|channel|>final user<|message|>Test<|end|>"
+  },
+  {
+    "role": "assistant",
+    "content": "You said: 'Test'. I'm a simple chatbot! Ask me something.",
+    "channel": "final",
+    "timestamp": "2026-01-26T16:15:20.034686",
+    "harmony_format": "<|start|><|channel|>final assistant<|message|>You said: 'Test'. I'm a simple chatbot! Ask me something.<|end|>"
+  },
+  {
+    "role": "user",
+    "content": "Hello",
+    "channel": "final",
+    "timestamp": "2026-01-26T16:15:20.035746"
+  },
+  {
+    "role": "assistant",
+    "content": "Thinking about: Hello",
+    "channel": "analysis",
+    "is_chain_of_thought": true,
+    "timestamp": "2026-01-26T16:15:20.035885"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! I'm a chatbot using Harmony format. How can I help you?",
+    "channel": "final",
+    "is_chain_of_thought": false,
+    "timestamp": "2026-01-26T16:15:20.035995"
+  }
+]

@@ -1,0 +1,25 @@
+# Harmony Format Chatbot Requirements
+# This is a lightweight project with no external dependencies
+# Only requires Python 3.7+
+
+# Optional: For enhanced JSON handling (not required for basic functionality)
+# pip install jsonschema  # For JSON Schema validation
+# pip install python-dateutil  # For advanced date handling
+
+# Development/Testing (optional)
+# pip install pytest  # For running tests
+# pip install black  # For code formatting
+# pip install mypy  # For type checking
+
+# To integrate with real OpenAI APIs (optional):
+# pip install openai  # OpenAI Python SDK
+# pip install python-harmony  # Harmony format library (if available)
+
+# Recommended: Install all optional dependencies
+# pip install -r requirements.txt
+
+# Current implementation uses only Python standard library:
+# - json (message storage)
+# - datetime (timestamps)
+# - pathlib (file handling)
+# - typing (type hints)

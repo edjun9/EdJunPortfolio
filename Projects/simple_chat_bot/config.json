@@ -1,0 +1,26 @@
+{
+  "chatbot": {
+    "name": "Harmony Chatbot",
+    "version": "1.0.0",
+    "description": "A simple chatbot using OpenAI Harmony response format",
+    "knowledge_cutoff": "2024-06",
+    "current_date": "2025-01-26",
+    "reasoning": "high"
+  },
+  "messages_file": "messages.json",
+  "system_prompt": {
+    "role": "system",
+    "content": "You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2024-06\nCurrent date: 2025-01-26\n\nReasoning: high\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message."
+  },
+  "dummy_responses": {
+    "hello": "Hello! I'm a chatbot using Harmony format. How can I help you?",
+    "hi": "Hi there! What can I assist you with?",
+    "how are you": "I'm working great! I'm using the OpenAI Harmony format.",
+    "what is harmony": "Harmony is the response format for gpt-oss models. It uses special tokens like <|start|>, <|end|>, and <|message|>.",
+    "tell me about harmony": "Harmony is designed to mimic the OpenAI Responses API with special tokens for message structure and metadata.",
+    "channels": "Harmony supports three channels: 'final' for user-facing output, 'analysis' for chain-of-thought, and 'commentary' for tool calls.",
+    "special tokens": "Key tokens: <|start|> (message begin), <|end|> (message end), <|message|> (header/content transition), <|channel|> (channel info), <|return|> (completion), <|call|> (tool call)",
+    "bye": "Goodbye! Feel free to chat again anytime.",
+    "default": "You said: '{input}'. I'm a simple chatbot using Harmony format. Ask me about Harmony, or anything else!"
+  }
+}
